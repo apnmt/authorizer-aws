@@ -16,10 +16,10 @@ jobs:
       - uses: actions/checkout@v2
       - name: Package Function
         run: |
-          zip authservice.zip authservice.js
+          zip authorizer.zip lambda.py
       - name: Upload to S3
         run: |
-          aws s3 cp authservice.zip s3://apnmt-aws-applications/authservice.zip
+          aws s3 cp authorizer.zip s3://apnmt-aws-applications/authorizer.zip
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
