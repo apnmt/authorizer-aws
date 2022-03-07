@@ -14,9 +14,15 @@ jobs:
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.6'
       - name: Package Function
         run: |
-          zip authorizer.zip lambda.py
+          pip install --target ./package python-jose==3.2.0
+          cd ./package
+          zip -r ../authorizer.zip . > /dev/null
+          cd .. && zip -g authorizer.zip lambda.py
       - name: Upload to S3
         run: |
           aws s3 cp authorizer.zip s3://apnmt-aws-applications/authorizer.zip
