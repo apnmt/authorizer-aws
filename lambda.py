@@ -10,7 +10,6 @@ from jose.utils import base64url_decode
 TABLE_NAME = os.environ['TABLE_NAME']
 AWS_REGION = os.environ['AWS_LAMBDA_REGION']
 COGNITO_USER_POOL_ID = os.environ['COGNITO_USER_POOL_ID']
-COGNITO_APP_CLIENT_ID = os.environ['COGNITO_APP_CLIENT_ID']
 
 keys_url = 'https://cognito-idp.{}.amazonaws.com/{}/.well-known/jwks.json'.format(AWS_REGION, COGNITO_USER_POOL_ID)
 # instead of re-downloading the public keys every time
@@ -159,11 +158,6 @@ def validate_token(token):
     # additionally we can verify the token expiration
     if time.time() > claims['exp']:
         print('Token is expired')
-        return False
-
-    # and the Audience  (use claims['client_id'] if verifying an access token)
-    if claims['client_id'] != COGNITO_APP_CLIENT_ID:
-        print('Token was not issued for this audience')
         return False
 
     # now we can use the claims
