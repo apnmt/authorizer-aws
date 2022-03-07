@@ -8,7 +8,7 @@ from jose.utils import base64url_decode
 
 # envs
 TABLE_NAME = os.environ['TABLE_NAME']
-AWS_REGION = os.environ['AWS_REGION']
+AWS_REGION = os.environ['AWS_LAMBDA_REGION']
 COGNITO_USER_POOL_ID = os.environ['COGNITO_USER_POOL_ID']
 COGNITO_APP_CLIENT_ID = os.environ['COGNITO_APP_CLIENT_ID']
 
