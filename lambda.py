@@ -100,10 +100,10 @@ def batch_query_wrapper(table, key, values):
 def parse_token_data(event):
     response = {'valid': False}
 
-    if 'Authorization' not in event['headers']:
+    if 'authorizationToken' not in event:
         return response
 
-    auth_header = event['headers']['Authorization']
+    auth_header = event['authorizationToken']
     auth_header_list = auth_header.split(' ')
 
     # deny request of header isn't made out of two strings, or
