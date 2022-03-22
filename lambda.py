@@ -25,31 +25,34 @@ def handler(event, context):
 
     token_data = parse_token_data(event)
     if token_data['valid'] is False:
-        return get_deny_policy()
+        return get_policy(['any'])
 
     try:
         claims = validate_token(token_data['token'])
         groups = claims['cognito:groups']
 
-        results = batch_query_wrapper(TABLE_NAME, 'group', groups)
-        print(results)
-
-        if len(results) > 0:
-            policy = {
-                'Version': results[0]['policy']['Version'],
-                'Statement': []
-            }
-            for item in results:
-                policy['Statement'] = policy['Statement'] + item['policy']['Statement']
-
-            return get_response_object(policy)
-
-        return get_deny_policy()
+        return get_policy(groups)
 
     except Exception as e:
         print(e)
 
-    return get_deny_policy()
+    return get_policy(['any'])
+
+def get_policy(groups):
+    results = batch_query_wrapper(TABLE_NAME, 'group', groups)
+    print(results)
+
+    if len(results) > 0:
+        policy = {
+            'Version': results[0]['policy']['Version'],
+            'Statement': []
+        }
+        for item in results:
+            policy['Statement'] = policy['Statement'] + item['policy']['Statement']
+
+        return get_response_object(policy)
+
+    return get_policy(['any'])
 
 
 def get_response_object(policyDocument, principalId='yyyyyyyy', context={}):
@@ -57,24 +60,6 @@ def get_response_object(policyDocument, principalId='yyyyyyyy', context={}):
         "principalId": principalId,
         "policyDocument": policyDocument,
         "context": context,
-        "usageIdentifierKey": "{api-key}"
-    }
-
-
-def get_deny_policy():
-    return {
-        "principalId": "yyyyyyyy",
-        "policyDocument": {
-            "Version": "2012-10-17",
-            "Statement": [
-                {
-                    "Action": "execute-api:Invoke",
-                    "Effect": "Deny",
-                    "Resource": "arn:aws:execute-api:*:*:*/ANY/*"
-                }
-            ]
-        },
-        "context": {},
         "usageIdentifierKey": "{api-key}"
     }
 
